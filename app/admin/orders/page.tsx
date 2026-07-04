@@ -1,6 +1,5 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { Search, Check, X } from 'lucide-react';
 
@@ -30,13 +29,10 @@ export default function AdminOrdersPage() {
     APPROVED: 'text-green-400 bg-green-400/10',
     REJECTED: 'text-red-400 bg-red-400/10',
     DONE: 'text-blue-400 bg-blue-400/10',
-    CANCELLED: 'text-gray-400 bg-gray-400/10',
   };
 
   const filtered = orders.filter(o =>
-    !search ||
-    o.customer?.username?.toLowerCase().includes(search.toLowerCase()) ||
-    o.id.includes(search)
+    !search || o.customer?.username?.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
@@ -47,27 +43,18 @@ export default function AdminOrdersPage() {
         <input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search by customer or order ID..."
+          placeholder="Search orders..."
           className="w-full bg-gray-900 border border-gray-700 rounded-xl pl-10 pr-4 py-3 text-white text-sm outline-none focus:border-indigo-500"
         />
       </div>
       <div className="space-y-4">
         {filtered.map((order) => (
-          <motion.div
-            key={order.id}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="glass rounded-2xl p-6"
-          >
+          <div key={order.id} className="glass rounded-2xl p-6">
             <div className="flex items-start justify-between mb-4">
               <div>
                 <p className="font-bold text-white">Order #{order.id.slice(-8)}</p>
-                <p className="text-gray-400 text-sm">
-                  Customer: <span className="text-indigo-300">{order.customer?.username}</span>
-                </p>
-                <p className="text-gray-400 text-sm">
-                  Seller: <span className="text-indigo-300">{order.seller?.username}</span>
-                </p>
+                <p className="text-gray-400 text-sm">Customer: {order.customer?.username}</p>
+                <p className="text-gray-400 text-sm">Seller: {order.seller?.username}</p>
                 <p className="text-white font-bold text-lg mt-1">LKR {order.totalAmount}</p>
                 {order.rejectReason && (
                   <p className="text-red-400 text-xs mt-1">Reason: {order.rejectReason}</p>
@@ -82,16 +69,16 @@ export default function AdminOrdersPage() {
                 <>
                   <button
                     onClick={() => updateStatus(order.id, 'APPROVED')}
-                    className="flex items-center gap-1 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-xl text-sm transition-colors"
+                    className="flex items-center gap-1 px-4 py-2 bg-green-600 text-white rounded-xl text-sm"
                   >
                     <Check className="w-4 h-4" /> Approve
                   </button>
                   <button
                     onClick={() => {
-                      const r = prompt('Reject reason (optional):');
+                      const r = prompt('Reject reason:');
                       updateStatus(order.id, 'REJECTED', r || '');
                     }}
-                    className="flex items-center gap-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl text-sm transition-colors"
+                    className="flex items-center gap-1 px-4 py-2 bg-red-600 text-white rounded-xl text-sm"
                   >
                     <X className="w-4 h-4" /> Reject
                   </button>
@@ -100,18 +87,16 @@ export default function AdminOrdersPage() {
               {order.status === 'APPROVED' && (
                 <button
                   onClick={() => updateStatus(order.id, 'DONE')}
-                  className="flex items-center gap-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm transition-colors"
+                  className="flex items-center gap-1 px-4 py-2 bg-blue-600 text-white rounded-xl text-sm"
                 >
                   <Check className="w-4 h-4" /> Mark Done
                 </button>
               )}
             </div>
-          </motion.div>
+          </div>
         ))}
         {filtered.length === 0 && (
-          <div className="glass rounded-2xl p-12 text-center text-gray-500">
-            No orders found
-          </div>
+          <div className="glass rounded-2xl p-12 text-center text-gray-500">No orders found</div>
         )}
       </div>
     </div>
